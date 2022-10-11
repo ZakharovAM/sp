@@ -1,4 +1,3 @@
-import heapq
 from collections import namedtuple, Counter
 from pathlib import Path
 
@@ -10,7 +9,7 @@ def biggestPath(x: dict) -> str:
     queue_nodes: list[Node] = [start]
     visited: list[str] = [start.path]
     while queue_nodes:
-        current_node: Node = heapq.heappop(queue_nodes)
+        current_node: Node = queue_nodes.pop(0)
         if node_is_dict := isinstance(current_node.unit, dict):
             for root, nodes in current_node.unit.items():
                 if isinstance(nodes, dict):
@@ -18,7 +17,7 @@ def biggestPath(x: dict) -> str:
                         visited.append(current_node.path / root)
                     else:
                         new_node = Node(current_node.path / root, nodes)
-                        heapq.heappush(queue_nodes, new_node)
+                        queue_nodes.append(new_node)
                         visited.append(new_node.path)
                 elif node_is_list := isinstance(nodes, list):
                     nodes_without_doubles = [k for k, v in Counter(nodes).items() if v == 1]
@@ -28,16 +27,6 @@ def biggestPath(x: dict) -> str:
                         for i in nodes:
                             visited.append(current_node.path / root / i)
 
-    if b_path_in_list := heapq.nlargest(1, visited, key=lambda path: len(path.as_posix().split("/"))):
-        return b_path_in_list[0]
-    else:
-        return start.path.as_posix()
-
-
-if __name__ == "__main__":
-    d1 = {"dir1": {}, "dir2": ["file1"], "dir3": {"dir4": ["file2"], "dir5": {"dir6": {"dir7": {}}}}}
-    print(biggestPath(d1))
-    d2 = {"dir1": ["file1", "file1"]}
-    print(biggestPath(d2))
-    d3 = {"dir1": ["file1", "file2", "file2"]}
-    print(biggestPath(d3))
+    visited.sort(key=lambda path: len(path.as_posix().split("/")), reverse=True)
+    result = visited.pop(0).as_posix()
+    return result
