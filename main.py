@@ -27,6 +27,5 @@ def biggestPath(x: dict) -> str:
                         for i in nodes:
                             visited.append(current_node.path / root / i)
 
-    visited.sort(key=lambda path: len(path.as_posix().split("/")), reverse=True)
-    result = visited.pop(0).as_posix()
+    result = max(visited, key=lambda path: len(path.as_posix().split("/"))).as_posix()
     return result
