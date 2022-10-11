@@ -11,7 +11,7 @@ def biggestPath(x: dict) -> str:
     visited: list[str] = [start.path]
     while queue_nodes:
         current_node: Node = heapq.heappop(queue_nodes)
-        if isinstance(current_node.unit, dict):
+        if node_is_dict := isinstance(current_node.unit, dict):
             for root, nodes in current_node.unit.items():
                 if isinstance(nodes, dict):
                     if is_nodes_empty := not nodes.items():
@@ -20,7 +20,7 @@ def biggestPath(x: dict) -> str:
                         new_node = Node(current_node.path / root, nodes)
                         heapq.heappush(queue_nodes, new_node)
                         visited.append(new_node.path)
-                elif isinstance(nodes, list):
+                elif node_is_list := isinstance(nodes, list):
                     nodes_without_doubles = [k for k, v in Counter(nodes).items() if v == 1]
                     if is_nodes_empty := not nodes_without_doubles:
                         visited.append(current_node.path / root)
